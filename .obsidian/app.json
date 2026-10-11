@@ -1,0 +1,9 @@
+{
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "00 Inbox",
+  "attachmentFolderPath": "03 Resources/Adjuntos",
+  "showUnsupportedFiles": true,
+  "promptDelete": true,
+  "useTab": true
+}
