@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preevaluador Geografía Económica</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #fff; --text: #1d2330; --muted: #5f6b7a; --line: #dde2e8;
+  --accent: #2b5fab; --warn: #b45309; --warn-bg: #fff4e5; --err: #b42318; --err-bg: #fdecea;
+  --ok: #1a7f37; --ok-bg: #e8f5ec;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171c; --panel: #1d2128; --text: #e6e9ee; --muted: #9aa4b2; --line: #313844;
+    --accent: #7ea6e8; --warn: #f0a94b; --warn-bg: #3a2a12; --err: #f28b82; --err-bg: #3b1a18;
+    --ok: #56d364; --ok-bg: #12301a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.45 system-ui, sans-serif; background: var(--bg); color: var(--text); }
+header, main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+h1 { font-size: 1.25rem; margin: 0; }
+h2 { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+.note { width: 100%; margin: 0; color: var(--muted); font-size: .9rem; }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+button, select, input, textarea { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; }
+button, select { cursor: pointer; }
+button:disabled { opacity: .6; cursor: default; }
+.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.acciones { display: flex; gap: 8px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.card { border: 1px solid var(--line); border-radius: 6px; padding: 12px; }
+.card b { display: block; font-size: 1.6rem; }
+.card span { color: var(--muted); font-size: .85rem; }
+.bar { display: grid; grid-template-columns: 70px 1fr 60px; gap: 10px; align-items: center; margin: 6px 0; font-size: .9rem; }
+.track { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.fill { height: 100%; background: var(--accent); }
+.filters { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; white-space: nowrap; }
+td.num, th.num { text-align: center; }
+td.cell { cursor: pointer; }
+td.cell:hover, td.cell:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+td small { color: var(--muted); }
+.fin { font-weight: 600; }
+.flag { color: var(--warn); background: var(--warn-bg); font-weight: 600; }
+.legend { color: var(--muted); font-size: .85rem; margin: 10px 0 0; }
+.empty { text-align: center; padding: 48px 16px; }
+.error, .okmsg, .avisos { border-radius: 6px; padding: 10px 12px; margin-top: 12px; text-align: left; }
+.error { color: var(--err); background: var(--err-bg); }
+.okmsg { color: var(--ok); background: var(--ok-bg); }
+.avisos { color: var(--warn); background: var(--warn-bg); margin: 0 0 16px; font-size: .9rem; }
+dialog { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); width: min(900px, calc(100% - 32px)); padding: 16px; }
+dialog::backdrop { background: rgb(0 0 0 / .45); }
+dialog td { white-space: normal; }
+dialog input[type=number] { width: 5.5em; }
+#pdf iframe { width: 100%; height: 70vh; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+.campos { display: grid; gap: 10px; margin: 12px 0; }
+.campos label { display: grid; gap: 4px; }
+.campos textarea { width: 100%; resize: vertical; }
+.dhead { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.meta { color: var(--muted); font-size: .85rem; margin: 4px 0 12px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Preevaluador · Geografía Económica 9502</h1>
+  <div class="acciones">
+    <button class="primary abrir">Abrir carpeta del proyecto</button>
+    <button id="recargar" hidden>Recargar</button>
+  </div>
+  <p class="note">Las cifras son <b>precalificaciones</b> (IA + ajustes del docente); las marcadas con ✓ son la calificación final del docente.</p>
+</header>
+
+<main>
+  <section id="vacio" class="empty">
+    <p id="msg">No hay datos cargados.</p>
+    <button class="primary abrir">Abrir carpeta del proyecto</button>
+    <div id="error" class="error" role="alert" hidden></div>
+  </section>
+
+  <div id="datos" hidden>
+    <div id="avisos" class="avisos" hidden></div>
+    <section>
+      <h2>Resumen</h2>
+      <div class="cards" id="cards"></div>
+      <div id="barras"></div>
+    </section>
+    <section>
+      <h2>Filtros</h2>
+      <div class="filters">
+        <label>Alumno <select id="fAlumno"></select></label>
+        <label>Entrega <select id="fEntrega"></select></label>
+        <label><input type="checkbox" id="fRevision"> Solo por revisar</label>
+        <label><input type="checkbox" id="fSinFinal"> Sin calificación final</label>
+      </div>
+    </section>
+    <section>
+      <h2>Matriz alumno × entrega</h2>
+      <div class="scroll"><table id="matriz"></table></div>
+      <p class="legend">(!) marcado para revisión del docente · ✓ calificación final · "–" no entregado o no evaluado · clic en una celda para ver el detalle.
+        "Total curso" = suma de valor × ponderación de las entregas con valor (escala 0–10), con el peso que ya es calificación final o aún precalificación.</p>
+    </section>
+  </div>
+</main>
+
+<dialog id="detalle"></dialog>
+
+<script>
+// ponytail: mirrors rubrica.csv v1 and Proyecto.md weights; edit here if they change
+const RUBRICA = [
+  ['caratula', 'Carátula', 0.5], ['contenido', 'Contenido', 1], ['referencias', 'Referencias bibliográficas', 0.5],
+  ['graficas', 'Gráficas', 1], ['analisis', 'Análisis de la información', 1], ['representacion', 'Representación', 1],
+  ['esquemas', 'Esquemas/Diagramas', 1], ['mapas', 'Mapas', 2], ['indicadores', 'Indicadores', 2],
+];
+const PESOS = { E1: 5, E2: 5, E3: 10, E4: 10, E5: 20, E6: 20, TF: 30 };
+const ENTREGAS = Object.keys(PESOS);
+const DOCENTE = [...RUBRICA.map(r => 'doc_' + r[0]), 'calificacion_final', 'nota_docente', 'fecha_docente'];
+const COLUMNAS = ['cuenta', 'alumno', 'entrega', 'ruta', 'rubrica_version', 'fecha_revision',
+  ...RUBRICA.map(r => r[0]), 'precalificacion', 'revision_docente', 'anotaciones', ...DOCENTE];
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const num = v => (v == null || String(v).trim() === '' || isNaN(+v)) ? null : +v;
+const fmt = (v, d = 1) => v == null ? '–' : v.toFixed(d);
+const media = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : null;
+const porRevisar = f => /^s[ií]$/i.test(f.revision_docente.trim());
+const hoy = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
+
+// RFC 4180: quoted fields, escaped quotes, embedded commas and line breaks
+function parseCSV(t) {
+  t = t.replace(/^﻿/, '');
+  const rows = []; let row = [], f = '', q = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) {
+      if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; }
+      else f += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(f); f = ''; }
+    else if (c === '\n') { row.push(f); rows.push(row); row = []; f = ''; }
+    else if (c !== '\r') f += c;
+  }
+  if (f !== '' || row.length) { row.push(f); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim() !== ''));
+}
+
+const quote = s => /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+const serializar = rows => rows.map(r => r.map(quote).join(',')).join('\n') + '\n';
+
+function cargar(texto) {
+  const rows = parseCSV(texto);
+  if (!rows.length) throw new Error('resultados.csv está vacío.');
+  const head = rows[0].map(h => h.trim());
+  const faltan = COLUMNAS.filter(c => !head.includes(c));
+  if (faltan.length) throw new Error('Faltan columnas en resultados.csv: ' + faltan.join(', '));
+  const avisos = [], rutas = new Set();
+  const out = rows.slice(1).map((r, i) => {
+    const o = Object.fromEntries(head.map((h, j) => [h, (r[j] ?? '').trim()])), n = i + 2;
+    if (!o.ruta) avisos.push(`fila ${n}: sin ruta (no se podrá guardar)`);
+    else if (rutas.has(o.ruta)) avisos.push(`fila ${n}: ruta repetida "${o.ruta}"`);
+    rutas.add(o.ruta);
+    if (!ENTREGAS.includes(o.entrega)) avisos.push(`fila ${n}: entrega "${o.entrega}" desconocida`);
+    for (const [k, , max] of RUBRICA) for (const c of [k, 'doc_' + k]) {
+      const v = num(o[c]);
+      if (o[c] !== '' && (v == null || v < 0 || v > max)) avisos.push(`fila ${n}: ${c}="${o[c]}" fuera de 0–${max}`);
+    }
+    const fin = num(o.calificacion_final);
+    if (o.calificacion_final !== '' && (fin == null || fin < 0 || fin > 10)) avisos.push(`fila ${n}: calificacion_final="${o.calificacion_final}" fuera de 0–10`);
+    return o;
+  });
+  return { out, avisos };
+}
+
+function cargarAlumnos(texto) {
+  const rows = parseCSV(texto);
+  if (!rows.length) return [];
+  const head = rows[0].map(h => h.trim()), c = head.indexOf('cuenta'), n = head.indexOf('nombre');
+  if (c < 0 || n < 0) throw new Error('alumnos.csv debe tener las columnas cuenta,nombre.');
+  return rows.slice(1).map(r => ({ cuenta: (r[c] ?? '').trim(), nombre: (r[n] ?? '').trim() })).filter(a => a.cuenta);
+}
+
+// docente > IA por concepto; la suma solo existe si los 9 conceptos tienen valor
+const efectivo = (f, k) => num(f['doc_' + k]) ?? num(f[k]);
+const total = vs => vs.some(v => v == null) ? null : Math.round(vs.reduce((a, b) => a + b, 0) * 10 + 1e-9) / 10;
+const efectiva = f => total(RUBRICA.map(([k]) => efectivo(f, k)));
+const valor = f => { const fin = num(f.calificacion_final); return fin != null ? { v: fin, fin: true } : { v: efectiva(f), fin: false }; };
+
+function validar(e) {
+  const errs = [];
+  for (const [k, l, max] of RUBRICA) {
+    const s = e['doc_' + k] ?? '', v = num(s);
+    if (s !== '' && (v == null || v < 0 || v > max)) errs.push(`${l}: el puntaje docente debe estar entre 0 y ${max}.`);
+  }
+  const cf = e.calificacion_final ?? '', fin = num(cf);
+  if (cf !== '' && (fin == null || fin < 0 || fin > 10)) errs.push('Calificación final: debe estar entre 0 y 10.');
+  return errs;
+}
+
+// Relee el CSV tal como está en disco y solo toca las columnas del docente de la fila `ruta`
+function mezclar(texto, ruta, edit) {
+  const rows = parseCSV(texto);
+  if (!rows.length) throw new Error('resultados.csv está vacío.');
+  const head = rows[0].map(h => h.trim()), ri = head.indexOf('ruta');
+  if (ri < 0) throw new Error('resultados.csv no tiene la columna ruta.');
+  const fi = rows.findLastIndex((r, i) => i > 0 && (r[ri] ?? '').trim() === ruta);
+  if (fi < 0) throw new Error(`No se encontró la fila de ${ruta} en resultados.csv.`);
+  for (const [c, v] of Object.entries(edit)) {
+    const j = head.indexOf(c);
+    if (j < 0) throw new Error(`resultados.csv no tiene la columna ${c}.`);
+    while (rows[fi].length <= j) rows[fi].push('');
+    rows[fi][j] = v;
+  }
+  return (texto.startsWith('﻿') ? '﻿' : '') + serializar(rows);
+}
+
+// Alumnos de la lista primero; cuentas fuera de la lista (y SIN_IDENTIFICAR) por cuenta+alumno
+function armarEst(filas, roster) {
+  const m = new Map(roster.map(r => [r.cuenta, { key: r.cuenta, etiqueta: r.nombre || r.cuenta, cuenta: r.cuenta, extra: false, ent: {} }]));
+  filas.forEach((f, i) => {
+    let s = m.get(f.cuenta);
+    if (!s) {
+      const key = f.cuenta + '\t' + f.alumno;
+      s = m.get(key) ?? (m.set(key, { key, etiqueta: f.alumno || '(sin nombre)', cuenta: f.cuenta, extra: true, ent: {} }), m.get(key));
+    }
+    s.ent[f.entrega] = i; // la última fila gana si se repite alumno+entrega
+  });
+  return [...m.values()].sort((a, b) => a.extra - b.extra || a.etiqueta.localeCompare(b.etiqueta, 'es'));
+}
+
+function notas(texto) {
+  const n = {};
+  for (const parte of texto.split('|')) {
+    const m = parte.match(/^\s*([\wáéíóú]+)\s*:\s*(.*)$/i);
+    if (m && (RUBRICA.some(r => r[0] === m[1]) || m[1] === 'general')) n[m[1]] = m[2].trim();
+    else if (parte.trim()) n.general = ((n.general ? n.general + ' ' : '') + parte.trim());
+  }
+  return n;
+}
+
+// --- UI ---
+const $ = id => document.getElementById(id);
+const D = $('detalle');
+let root = null, filas = [], roster = [], est = [], cur = -1, urlPdf = null;
+
+function vacio(msg, err) {
+  $('datos').hidden = true; $('vacio').hidden = false;
+  $('msg').textContent = err ? 'No se pudo cargar la carpeta.' : msg;
+  $('error').hidden = !err; $('error').textContent = err || '';
+}
+
+const leer = async nombre => {
+  try { return await (await (await root.getFileHandle(nombre)).getFile()).text(); }
+  catch (e) { if (e.name === 'NotFoundError') return null; throw e; }
+};
+
+async function abrir() {
+  if (!window.showDirectoryPicker) return vacio('', 'Usa Chrome o Edge para abrir la carpeta del proyecto.');
+  try { root = await showDirectoryPicker({ mode: 'readwrite' }); }
+  catch (e) { if (e.name !== 'AbortError') vacio('', e.message); return; }
+  recargar();
+}
+
+async function recargar() {
+  if (!root) return;
+  if (D.open) D.close();
+  try {
+    const [res, al] = await Promise.all([leer('resultados.csv'), leer('alumnos.csv')]);
+    roster = al == null ? [] : cargarAlumnos(al);
+    $('recargar').hidden = false;
+    for (const b of document.querySelectorAll('.abrir')) b.textContent = 'Cambiar carpeta';
+    if (res == null) { filas = []; return vacio('Aún no hay resultados.csv: ejecuta el agente de preevaluación.'); }
+    aplicar(res);
+  } catch (e) { vacio('', e.message); }
+}
+
+function aplicar(texto) {
+  const { out, avisos } = cargar(texto);
+  filas = out;
+  if (!filas.length && !roster.length) return vacio('Aún no hay resultados.csv: ejecuta el agente de preevaluación.');
+  $('vacio').hidden = true; $('datos').hidden = false;
+  $('avisos').hidden = !avisos.length;
+  $('avisos').innerHTML = avisos.length ? '<b>Datos con problemas (se muestran igual):</b><br>' + avisos.map(esc).join('<br>') : '';
+  est = armarEst(filas, roster);
+  llenarFiltros(); render();
+}
+
+function llenarFiltros() {
+  const a = $('fAlumno').value, e = $('fEntrega').value;
+  $('fAlumno').innerHTML = '<option value="">Todos</option>' + est.map(s => `<option value="${esc(s.key)}">${esc(s.etiqueta)}</option>`).join('');
+  $('fEntrega').innerHTML = '<option value="">Todas</option>' + ENTREGAS.map(x => `<option>${x}</option>`).join('');
+  $('fAlumno').value = a; $('fEntrega').value = e;
+}
+
+function render() {
+  const vals = filas.map(f => valor(f).v).filter(v => v != null);
+  $('cards').innerHTML = [
+    ['Evaluadas', filas.length], ['Por revisar', filas.filter(porRevisar).length],
+    ['Con calificación final', filas.filter(f => num(f.calificacion_final) != null).length],
+    ['Alumnos', est.length], ['Promedio', fmt(media(vals))],
+  ].map(([l, v]) => `<div class="card"><span>${l}</span><b>${v}</b></div>`).join('');
+
+  $('barras').innerHTML = '<h2>Promedio por entrega</h2>' + ENTREGAS.map(e => {
+    const m = media(filas.filter(f => f.entrega === e).map(f => valor(f).v).filter(v => v != null));
+    return `<div class="bar"><span>${e} (${PESOS[e]}%)</span><div class="track"><div class="fill" style="width:${(m ?? 0) * 10}%"></div></div><span>${m == null ? 'sin datos' : fmt(m)}</span></div>`;
+  }).join('');
+
+  const fA = $('fAlumno').value, fE = $('fEntrega').value, fR = $('fRevision').checked, fS = $('fSinFinal').checked;
+  const cols = fE ? [fE] : ENTREGAS;
+  const lista = est.filter(s => {
+    if (fA && s.key !== fA) return false;
+    const idx = cols.map(e => s.ent[e]).filter(i => i != null);
+    if (fR && !idx.some(i => porRevisar(filas[i]))) return false;
+    if (fS && !idx.some(i => { const x = valor(filas[i]); return x.v != null && !x.fin; })) return false;
+    return true;
+  });
+
+  let html = `<thead><tr><th>Alumno</th>${cols.map(e => `<th class="num">${e}</th>`).join('')}<th class="num">Total curso</th></tr></thead><tbody>`;
+  for (const s of lista) {
+    let acum = 0, pf = 0, pp = 0;
+    for (const e of ENTREGAS) {
+      const x = s.ent[e] == null ? null : valor(filas[s.ent[e]]);
+      if (!x || x.v == null) continue;
+      acum += x.v * PESOS[e] / 100; x.fin ? pf += PESOS[e] : pp += PESOS[e];
+    }
+    const sub = s.extra ? (s.cuenta === 'SIN_IDENTIFICAR' ? 'sin identificar' : s.cuenta + ' · fuera de la lista') : s.cuenta;
+    html += `<tr><td>${esc(s.etiqueta)} <small>${esc(sub)}</small></td>` + cols.map(e => {
+      const i = s.ent[e];
+      if (i == null) return '<td class="num">–</td>';
+      const f = filas[i], x = valor(f), flag = porRevisar(f);
+      return `<td class="num cell${flag ? ' flag' : ''}${x.fin ? ' fin' : ''}" tabindex="0" data-i="${i}">${fmt(x.v)}${x.fin ? ' ✓' : ''}${flag ? ' (!)' : ''}</td>`;
+    }).join('') + `<td class="num">${pf + pp ? `${acum.toFixed(2)} <small>(${pf}% final, ${pp}% pre)</small>` : '–'}</td></tr>`;
+  }
+  if (!lista.length) html += `<tr><td colspan="${cols.length + 2}">Ningún resultado coincide con los filtros.</td></tr>`;
+  $('matriz').innerHTML = html + '</tbody>';
+}
+
+function limpiarPdf() { if (urlPdf) URL.revokeObjectURL(urlPdf); urlPdf = null; }
+
+async function verPdf() {
+  const f = filas[cur], box = $('pdf');
+  limpiarPdf(); box.innerHTML = '';
+  try {
+    const seg = f.ruta.split(/[\\/]/).filter(Boolean);
+    let h = root;
+    for (const s of seg.slice(0, -1)) h = await h.getDirectoryHandle(s);
+    const file = await (await h.getFileHandle(seg.at(-1))).getFile();
+    urlPdf = URL.createObjectURL(new Blob([file], { type: 'application/pdf' }));
+    box.innerHTML = `<iframe src="${urlPdf}" title="PDF de ${esc(f.ruta)}"></iframe>`;
+  } catch { box.innerHTML = `<div class="error" role="alert">No se encontró el PDF en ${esc(f.ruta)}</div>`; }
+}
+
+function detalle(i) {
+  cur = i; limpiarPdf();
+  const f = filas[i], n = notas(f.anotaciones), peso = PESOS[f.entrega];
+  D.innerHTML = `
+    <div class="dhead"><h2 style="margin:0;color:var(--text);text-transform:none;font-size:1.05rem;letter-spacing:0">
+      ${esc(f.alumno || f.cuenta)} · ${esc(f.entrega)}${peso ? ` (${peso}%)` : ''}</h2>
+      <button data-act="cerrar">Cerrar</button></div>
+    <p class="meta">Ruta: ${esc(f.ruta)} · Rúbrica ${esc(f.rubrica_version)} · Revisión IA: ${esc(f.fecha_revision)} · Cuenta: ${esc(f.cuenta)}<br>
+      Revisión docente: ${porRevisar(f) ? '<span class="flag">sí</span>' : 'no'}${f.fecha_docente ? ` · Última edición docente: ${esc(f.fecha_docente)}` : ''}</p>
+    <p><button data-act="pdf">Ver PDF</button></p><div id="pdf"></div>
+    <div class="scroll"><table><thead><tr><th>Concepto</th><th class="num">IA</th><th class="num">Docente</th><th class="num">Máx</th><th>Anotación IA</th></tr></thead><tbody>
+    ${RUBRICA.map(([k, l, max]) => {
+      const ia = num(f[k]);
+      return `<tr><td>${l}</td><td class="num${ia == null ? ' flag' : ''}">${ia == null ? 'Sin evaluar' : fmt(ia, 2)}</td>
+        <td class="num"><input type="number" class="doc" data-k="${k}" data-ia="${ia ?? ''}" min="0" max="${max}" step="0.05" value="${esc(f['doc_' + k])}" aria-label="Puntaje docente: ${esc(l)}"></td>
+        <td class="num">${max}</td><td>${esc(n[k] ?? '')}</td></tr>`;
+    }).join('')}
+    </tbody></table></div>
+    <p class="meta"><b>Precalificación efectiva: <span id="efec"></span> / 10</b> (docente si existe, si no IA)</p>
+    ${n.general ? `<p class="meta"><b>General (IA):</b> ${esc(n.general)}</p>` : ''}
+    <div class="campos">
+      <label>Calificación final (0–10, opcional) <input type="number" id="dFinal" min="0" max="10" step="0.1" value="${esc(f.calificacion_final)}"></label>
+      <label>Nota del docente <textarea id="dNota" rows="3">${esc(f.nota_docente)}</textarea></label>
+    </div>
+    <div id="dmsg" role="status" hidden></div>
+    <p><button class="primary" data-act="guardar">Guardar</button></p>`;
+  recalc(); D.showModal();
+}
+
+function recalc() {
+  const vs = [...D.querySelectorAll('.doc')].map(el => num(el.value) ?? num(el.dataset.ia));
+  $('efec').textContent = fmt(total(vs));
+}
+
+function mensaje(txt, cls) {
+  const m = $('dmsg'); m.hidden = !txt; m.className = cls; m.textContent = txt;
+}
+
+async function guardar(btn) {
+  const f = filas[cur], edit = {};
+  for (const el of D.querySelectorAll('.doc')) edit['doc_' + el.dataset.k] = el.validity.badInput ? '?' : el.value.trim();
+  edit.calificacion_final = $('dFinal').validity.badInput ? '?' : $('dFinal').value.trim();
+  const errs = validar(edit);
+  if (errs.length) return mensaje(errs.join(' '), 'error');
+  edit.nota_docente = $('dNota').value.trim();
+  edit.fecha_docente = hoy();
+  btn.disabled = true;
+  try {
+    const actual = await leer('resultados.csv');
+    if (actual == null) throw new Error('resultados.csv ya no existe en la carpeta.');
+    const nuevo = mezclar(actual, f.ruta, edit);
+    const w = await (await root.getFileHandle('resultados.csv')).createWritable();
+    await w.write(nuevo); await w.close();
+    aplicar(nuevo); // refleja también las filas agregadas por el agente desde la carga
+    cur = filas.findLastIndex(x => x.ruta === f.ruta);
+    mensaje('Guardado', 'okmsg');
+  } catch (e) { mensaje('No se pudo guardar: ' + e.message, 'error'); }
+  btn.disabled = false;
+}
+
+D.onclick = e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  if (b.dataset.act === 'cerrar') D.close();
+  else if (b.dataset.act === 'pdf') verPdf();
+  else if (b.dataset.act === 'guardar') guardar(b);
+};
+D.oninput = recalc;
+D.onclose = limpiarPdf;
+for (const b of document.querySelectorAll('.abrir')) b.onclick = abrir;
+$('recargar').onclick = recargar;
+['fAlumno', 'fEntrega', 'fRevision', 'fSinFinal'].forEach(id => $(id).onchange = render);
+$('matriz').onclick = e => { const td = e.target.closest('td.cell'); if (td) detalle(+td.dataset.i); };
+$('matriz').onkeydown = e => { if (e.key === 'Enter' && e.target.matches('td.cell')) detalle(+e.target.dataset.i); };
+</script>
+</body>
+</html>

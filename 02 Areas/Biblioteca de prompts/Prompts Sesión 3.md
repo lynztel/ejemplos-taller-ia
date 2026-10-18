@@ -1,7 +1,7 @@
 ## Prompt para crear bóveda
 
 ```
-## Ususario
+## Usuario
 
 Describete detalladamente ¿Qué formación tienes? ¿A qué te dedicas? ¿pasatiempos? ¿rutinas de ejercicio y objetivos?, todo lo que quieras documentar.
 
@@ -112,6 +112,7 @@ Al final entrega la ruta del .pptx y una lista breve de vacíos de datos o supue
 ```
 
 **Resultado del prompt:** [[PISA_Mexico_impacto_economico.pptx]]
+[[Propuestas de Tesis en TDA.docx]]
 
 ---
 
@@ -134,6 +135,7 @@ Basarse en el estado del arte del área de investigación con mayor innovación,
 Usar exclusivamente fuentes academicas de alto prestigio.
 ```
 
+[[Propuestas de Investigación en Análisis Topológico de Datos Aplicado a la Macroeconometría]]
 ### Prompt mejorado
 
 

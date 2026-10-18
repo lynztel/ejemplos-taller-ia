@@ -1,0 +1,10 @@
+version,concepto,clave,maximo
+v1,Carátula,caratula,0.5
+v1,Contenido,contenido,1
+v1,Referencias bibliográficas,referencias,0.5
+v1,Gráficas,graficas,1
+v1,Análisis de la información,analisis,1
+v1,Representación,representacion,1
+v1,Esquemas/Diagramas,esquemas,1
+v1,Mapas,mapas,2
+v1,Indicadores,indicadores,2
