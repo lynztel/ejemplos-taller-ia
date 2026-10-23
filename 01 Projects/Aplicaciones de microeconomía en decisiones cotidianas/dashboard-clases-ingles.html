@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102e36">
+  <title>Clases de inglés · Proyección y meta Dolphin Mini</title>
+  <style>
+    :root {
+      --ink: #102e36;
+      --ink-soft: #49636a;
+      --paper: #f4f6f1;
+      --card: #fff;
+      --line: #e2e9e3;
+      --mint: #c9f279;
+      --mint-strong: #94c942;
+      --teal: #0d6c68;
+      --teal-pale: #e5f3ee;
+      --gold: #eab755;
+      --warn: #fff5df;
+      --warn-ink: #78530d;
+      --red: #b84739;
+      --shadow: 0 18px 45px rgba(19, 48, 51, .08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); }
+    button, input, select { font: inherit; }
+    .shell { max-width: 1440px; margin: 0 auto; padding: 26px clamp(16px, 3vw, 44px) 48px; }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 760; letter-spacing: -.03em; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px 11px 11px 3px; background: var(--mint); color: var(--ink); font-size: 18px; }
+    .topnote { color: var(--ink-soft); font-size: 12px; }
+    .hero { position: relative; overflow: hidden; min-height: 255px; display: grid; grid-template-columns: 1.4fr .8fr; align-items: center; gap: 20px; padding: clamp(24px, 4vw, 54px); border-radius: 28px; color: #fff; background: radial-gradient(circle at 78% 12%, rgba(201,242,121,.22), transparent 30%), linear-gradient(125deg, #102e36 0%, #15564f 100%); box-shadow: var(--shadow); }
+    .hero-copy { position: relative; z-index: 2; max-width: 670px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 13px; color: var(--mint); text-transform: uppercase; letter-spacing: .13em; font-size: 11px; font-weight: 800; }
+    .eyebrow::before { content: ""; width: 22px; height: 2px; background: currentColor; }
+    h1 { max-width: 680px; margin: 0; font-size: clamp(30px, 4vw, 52px); line-height: 1.04; letter-spacing: -.05em; }
+    .hero p { max-width: 630px; margin: 16px 0 0; color: #d9e9e2; font-size: 15px; line-height: 1.65; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .tag { border: 1px solid rgba(255,255,255,.2); border-radius: 100px; padding: 7px 11px; color: #eff8f2; font-size: 11px; background: rgba(255,255,255,.06); }
+    .car-wrap { position: relative; min-height: 170px; display: flex; align-items: center; justify-content: center; }
+    .car-photo { position: relative; width: min(100%, 340px); max-height: 175px; aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid rgba(255,255,255,.2); border-radius: 16px; box-shadow: 0 17px 25px rgba(0,0,0,.2); }
+    .orbit { position: absolute; width: 260px; height: 150px; border: 1px solid rgba(201,242,121,.28); border-radius: 50%; transform: rotate(-13deg); }
+    .car { position: relative; width: min(100%, 340px); height: 125px; filter: drop-shadow(0 17px 13px rgba(0,0,0,.25)); }
+    .car-body { position: absolute; left: 8%; right: 6%; bottom: 22px; height: 56px; border-radius: 25px 33px 17px 16px; background: linear-gradient(130deg, #d6f987, #9dd34c 65%, #7cba35); }
+    .car-roof { position: absolute; left: 26%; bottom: 69px; width: 48%; height: 43px; border-radius: 42px 44px 3px 3px; background: linear-gradient(135deg, #b1dbd2, #5b938a); clip-path: polygon(15% 0, 80% 0, 100% 100%, 0 100%); }
+    .car-window { position: absolute; left: 30%; bottom: 73px; width: 39%; height: 30px; background: linear-gradient(120deg, #173f48, #2e6670); clip-path: polygon(13% 0, 73% 0, 100% 100%, 0 100%); }
+    .wheel { position: absolute; bottom: 6px; width: 42px; height: 42px; border: 8px solid #18343a; border-radius: 50%; background: #92a5a0; box-shadow: inset 0 0 0 5px #d6e4de; }
+    .wheel.left { left: 20%; } .wheel.right { right: 18%; }
+    .light { position: absolute; right: 5%; bottom: 49px; width: 17px; height: 7px; border-radius: 0 6px 6px 0; background: #fff1b8; }
+    .car-label { position: absolute; right: 0; bottom: -8px; padding: 9px 12px; border-radius: 12px; color: var(--ink); background: var(--mint); font-size: 11px; font-weight: 800; box-shadow: var(--shadow); }
+    .notice { display: flex; gap: 12px; align-items: flex-start; margin: 18px 0; padding: 14px 17px; border: 1px solid #ead7a8; border-radius: 14px; color: var(--warn-ink); background: var(--warn); font-size: 12px; line-height: 1.55; }
+    .notice strong { white-space: nowrap; }
+    .notice .dot { width: 8px; height: 8px; flex: 0 0 8px; margin-top: 4px; border-radius: 50%; background: var(--gold); }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin: 31px 0 14px; }
+    .section-head h2 { margin: 0; font-size: 21px; letter-spacing: -.035em; }
+    .section-head p { margin: 5px 0 0; color: var(--ink-soft); font-size: 12px; }
+    .period-tools { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+    .segmented { display: inline-flex; padding: 4px; gap: 3px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .segmented button { border: 0; border-radius: 8px; padding: 8px 14px; color: var(--ink-soft); background: transparent; cursor: pointer; font-size: 12px; font-weight: 750; }
+    .segmented button.active { color: #fff; background: var(--ink); }
+    select, .select-like { min-height: 39px; border: 1px solid var(--line); border-radius: 10px; padding: 0 12px; color: var(--ink); background: #fff; cursor: pointer; }
+    .filter-label { color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .metric { min-height: 132px; padding: 17px 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: 0 8px 22px rgba(22,55,51,.035); }
+    .metric-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+    .metric-label .mini-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
+    .metric-value { margin: 16px 0 5px; font-size: clamp(23px, 2.3vw, 31px); font-weight: 790; letter-spacing: -.045em; }
+    .metric-note { color: #7a8d8d; font-size: 10px; line-height: 1.45; }
+    .metric.highlight { border-color: #c4e995; background: linear-gradient(145deg, #f8ffed, #fff); }
+    .metric.highlight .mini-dot { background: var(--mint-strong); }
+    .hours-summary { display: grid; grid-template-columns: 1fr 1fr .8fr; gap: 12px; margin-top: 12px; }
+    .hours-card { min-height: 112px; padding: 15px 18px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .hours-label { color: var(--ink-soft); font-size: 10px; font-weight: 750; }
+    .hours-value { margin-top: 9px; font-size: 22px; font-weight: 790; letter-spacing: -.04em; }
+    .hours-equivalence { margin-top: 2px; color: var(--teal); font-size: 12px; font-weight: 760; }
+    .hours-note { margin-top: 6px; color: #7a8d8d; font-size: 9px; line-height: 1.4; }
+    .hours-card.emphasis { border-color: #c4e995; background: linear-gradient(145deg, #f8ffed, #fff); }
+    .hours-card.emphasis .hours-value { color: var(--teal); }
+    .income-panel { margin-top: 16px; padding: 21px; }
+    .income-heading { display: flex; justify-content: space-between; align-items: start; gap: 14px; }
+    .income-heading h2 { margin: 0; font-size: 19px; letter-spacing: -.03em; }
+    .income-heading p { margin: 5px 0 0; max-width: 770px; color: var(--ink-soft); font-size: 11px; line-height: 1.5; }
+    .income-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; margin-top: 14px; }
+    .income-card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: #fbfcfa; }
+    .income-card:nth-child(2) { background: #fffaf0; border-color: #f1dfb8; }
+    .income-card:nth-child(3) { background: #f2faf7; border-color: #d2e9df; }
+    .income-card h3 { margin: 0; font-size: 12px; }
+    .income-hours { margin-top: 4px; color: #718582; font-size: 10px; }
+    .income-label { margin-top: 13px; color: var(--ink-soft); font-size: 9px; font-weight: 750; text-transform: uppercase; letter-spacing: .07em; }
+    .income-value { margin-top: 4px; font-size: clamp(23px, 2.3vw, 30px); font-weight: 820; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+    .income-detail { min-height: 28px; margin-top: 4px; color: #718582; font-size: 10px; line-height: 1.4; }
+    .income-ceiling { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(16,46,54,.1); color: var(--ink-soft); font-size: 10px; line-height: 1.45; }
+    .income-ceiling strong { color: var(--teal); font-size: 13px; }
+    .income-caveat { margin-top: 12px; padding: 10px 12px; border-radius: 10px; color: var(--warn-ink); background: var(--warn); font-size: 10px; line-height: 1.5; }
+    .opportunities-panel { margin-top: 16px; padding: 21px; }
+    .opportunities-heading h2 { margin: 0; font-size: 18px; letter-spacing: -.03em; }
+    .opportunities-heading p { margin: 5px 0 0; color: var(--ink-soft); font-size: 10px; line-height: 1.5; }
+    .opportunity-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; margin-top: 13px; }
+    .opportunity-card { min-width: 0; padding: 15px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcfa; }
+    .opportunity-card:nth-child(2) { background: #fffaf0; border-color: #f1dfb8; }
+    .opportunity-card:nth-child(3) { background: #f2faf7; border-color: #d2e9df; }
+    .opportunity-tag { color: var(--teal); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    .opportunity-card h3 { margin: 7px 0 6px; font-size: 13px; line-height: 1.35; }
+    .opportunity-price { color: var(--ink); font-size: 18px; font-weight: 820; letter-spacing: -.03em; }
+    .opportunity-copy { margin-top: 5px; color: var(--ink-soft); font-size: 10px; line-height: 1.5; }
+    .opportunity-card a { display: inline-block; margin-top: 9px; color: var(--teal); font-size: 10px; font-weight: 800; text-underline-offset: 2px; }
+    .opportunity-note { margin-top: 12px; padding: 10px 12px; border-radius: 10px; color: var(--warn-ink); background: var(--warn); font-size: 10px; line-height: 1.5; }
+    .presentation-panel { margin-top: 16px; overflow: hidden; }
+    .presentation-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 18px 21px; }
+    .presentation-head h2 { margin: 0; font-size: 16px; }
+    .presentation-head p { margin: 5px 0 0; color: var(--ink-soft); font-size: 10px; line-height: 1.4; }
+    .presentation-link { flex: 0 0 auto; padding: 9px 12px; border-radius: 10px; color: #fff; background: var(--teal); text-decoration: none; font-size: 10px; font-weight: 800; }
+    .presentation-frame { display: block; width: 100%; height: min(68vh, 620px); min-height: 420px; border: 0; border-top: 1px solid var(--line); background: #102e36; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, .85fr); gap: 16px; margin-top: 16px; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: 0 8px 22px rgba(22,55,51,.035); }
+    .panel-pad { padding: 21px; }
+    .panel h3 { margin: 0; font-size: 16px; letter-spacing: -.025em; }
+    .panel-sub { margin: 6px 0 0; color: var(--ink-soft); font-size: 11px; line-height: 1.5; }
+    .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 15px 0 5px; color: var(--ink-soft); font-size: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-swatch { width: 16px; height: 4px; border-radius: 4px; background: var(--teal); }
+    .legend-swatch.target { background: var(--gold); }
+    .legend-swatch.mark { width: 8px; height: 8px; border-radius: 50%; background: var(--mint-strong); }
+    .chart-wrap { width: 100%; min-height: 250px; overflow: hidden; }
+    svg { width: 100%; height: auto; display: block; }
+    .chart-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; color: #7a8d8d; font-size: 10px; }
+    .car-goal { margin-top: 15px; padding: 15px; border-radius: 15px; background: var(--teal-pale); }
+    .goal-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; font-size: 11px; font-weight: 750; }
+    .goal-row strong { font-size: 13px; }
+    .progress { height: 9px; margin: 10px 0 7px; overflow: hidden; border-radius: 100px; background: rgba(13,108,104,.13); }
+    .progress > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--teal), var(--mint-strong)); transition: width .25s; }
+    .goal-note { color: var(--ink-soft); font-size: 10px; line-height: 1.5; }
+    .assumptions { padding: 20px; }
+    .assumptions-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
+    .editable-pill { padding: 5px 8px; border-radius: 100px; color: #506729; background: #eef8de; font-size: 9px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 11px; margin-top: 17px; }
+    .control { min-width: 0; }
+    .control.full { grid-column: 1 / -1; }
+    .control label { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; color: #536a70; font-size: 10px; font-weight: 700; line-height: 1.35; }
+    .control label span { color: var(--ink); font-variant-numeric: tabular-nums; }
+    .control input[type="number"] { width: 100%; height: 37px; border: 1px solid var(--line); border-radius: 9px; padding: 0 10px; color: var(--ink); background: #fbfcfa; font-variant-numeric: tabular-nums; }
+    .control input[type="range"] { width: 100%; accent-color: var(--teal); }
+    .control small { display: block; margin-top: 4px; color: #879898; font-size: 9px; line-height: 1.4; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .toggle-copy { color: var(--ink-soft); font-size: 10px; line-height: 1.4; }
+    .toggle-copy strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: 11px; }
+    .switch { position: relative; width: 42px; height: 24px; flex: 0 0 42px; }
+    .switch input { position: absolute; opacity: 0; }
+    .switch span { position: absolute; inset: 0; border-radius: 30px; background: #c4ceca; cursor: pointer; transition: .2s; }
+    .switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: .2s; }
+    .switch input:checked + span { background: var(--teal); }
+    .switch input:checked + span::after { transform: translateX(18px); }
+    .scenario-note { margin-top: 14px; padding: 11px 12px; border-radius: 11px; color: var(--warn-ink); background: #fff8e9; font-size: 10px; line-height: 1.5; }
+    .formula { margin-top: 13px; padding: 11px 12px; border: 1px dashed #cbd9d0; border-radius: 11px; color: #567068; background: #fbfcfa; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.65; overflow-wrap: anywhere; }
+    .table-panel { margin-top: 16px; overflow: hidden; }
+    .table-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 19px 21px; }
+    .table-head h3 { margin: 0; font-size: 15px; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 660px; }
+    th, td { padding: 12px 17px; border-top: 1px solid #edf1ed; text-align: right; font-size: 11px; white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: #748583; background: #fafbf9; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+    td { color: #355057; font-variant-numeric: tabular-nums; }
+    td:first-child { font-weight: 750; }
+    .positive { color: #14746a; font-weight: 800; }
+    .negative { color: var(--red); font-weight: 800; }
+    .sources { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 17px; color: #758785; font-size: 10px; }
+    .sources a { color: var(--teal); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    .footnotes { margin-top: 15px; padding: 14px 17px; border: 1px solid var(--line); border-radius: 14px; color: #637875; background: rgba(255,255,255,.56); font-size: 10px; line-height: 1.65; }
+    .footnotes strong { color: var(--ink); }
+    .status { display: inline-flex; align-items: center; gap: 6px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+    .status.ready .status-dot { background: var(--mint-strong); }
+    .tooltip { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; color: var(--teal); background: #e8f2ee; font-size: 9px; cursor: help; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .car-wrap { position: absolute; right: 12px; bottom: 20px; width: 34%; opacity: .72; }
+      .hero-copy { max-width: 72%; }
+      .layout { grid-template-columns: 1fr; }
+      .income-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .opportunity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 650px) {
+      .shell { padding: 16px 13px 32px; }
+      .topnote { display: none; }
+      .hero { min-height: 300px; padding: 25px 20px; align-items: start; }
+      .hero-copy { max-width: 100%; }
+      .hero p { max-width: 95%; font-size: 13px; }
+      .car-wrap { right: 10px; bottom: 2px; width: 50%; min-height: 110px; opacity: .65; transform: scale(.82); transform-origin: bottom right; }
+      .car-photo { max-height: 130px; }
+      .section-head { align-items: start; flex-direction: column; }
+      .period-tools { justify-content: flex-start; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .hours-summary { grid-template-columns: 1fr; gap: 9px; }
+      .income-grid { grid-template-columns: 1fr; }
+      .income-panel { padding: 16px; }
+      .opportunity-grid { grid-template-columns: 1fr; }
+      .opportunities-panel { padding: 16px; }
+      .income-heading { flex-direction: column; }
+      .presentation-head { align-items: start; flex-direction: column; padding: 16px; }
+      .presentation-frame { min-height: 360px; height: 60vh; }
+      .metric { min-height: 120px; padding: 14px; }
+      .metric-value { font-size: 23px; }
+      .panel-pad { padding: 16px; }
+      .control-grid { gap: 12px 9px; }
+      .chart-wrap { min-height: 210px; }
+      .notice { font-size: 11px; }
+      .notice strong { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark">↗</span><span>CLASES CON PROPÓSITO</span></div>
+      <div class="topnote">Herramienta de planeación · CDMX · Proyección editable</div>
+    </div>
+
+    <section class="hero" aria-labelledby="main-title">
+      <div class="hero-copy">
+        <div class="eyebrow">Una meta que se construye clase a clase</div>
+        <h1 id="main-title">Tu experiencia puede convertirse en un proyecto propio.</h1>
+        <p>Explora cómo podrían verse los ingresos, costos y ahorro de tus clases particulares de inglés. Ajusta los supuestos y mira qué tendría que pasar para acercarte a un BYD Dolphin Mini.</p>
+        <div class="hero-tags">
+          <span class="tag">Clases individuales en línea</span>
+          <span class="tag">A2–B2 · estudiantes de 18–25 años</span>
+          <span class="tag">Ciudad de México</span>
+        </div>
+      </div>
+      <div class="car-wrap" aria-label="Fotografía del BYD Dolphin Mini">
+        <img class="car-photo" src="presentacion/assets/byd-dolphin-mini.webp" alt="BYD Dolphin Mini verde en un estudio junto al mar">
+        <div class="car-label">DOLPHIN MINI · META DE AHORRO</div>
+      </div>
+    </section>
+
+    <div class="notice" role="status">
+      <span class="dot"></span>
+      <div><strong>Escenario de planeación, no promesa de ingresos.</strong> Los precios publicados de otros docentes no muestran cuántas clases venden. La demanda y su elasticidad aquí son supuestos editables; reemplázalos con consultas, reservas y clases cobradas. El costo de internet está pendiente de tu recibo.</div>
+    </div>
+
+    <div class="section-head">
+      <div>
+        <h2 id="period-title">Tu panorama de trabajo</h2>
+        <p id="period-subtitle">Proyección mensual con los supuestos actuales.</p>
+      </div>
+      <div class="period-tools" aria-label="Filtros de periodo">
+        <div class="segmented" role="group" aria-label="Cambiar periodo">
+          <button type="button" class="active" id="month-mode">Por mes</button>
+          <button type="button" id="year-mode">Por año</button>
+        </div>
+        <label class="filter-label" for="month-select" id="month-label">MES</label>
+        <select id="month-select" aria-label="Seleccionar mes"></select>
+        <label class="filter-label" for="year-select">AÑO</label>
+        <select id="year-select" aria-label="Seleccionar año"></select>
+      </div>
+    </div>
+
+    <section class="metrics" aria-live="polite">
+      <article class="metric">
+        <div class="metric-label"><span>Clases estimadas</span><i class="mini-dot"></i></div>
+        <div class="metric-value" id="metric-classes">—</div>
+        <div class="metric-note" id="metric-capacity">de — sesiones posibles en el periodo</div>
+      </article>
+      <article class="metric">
+        <div class="metric-label"><span>Ingresos por clases</span><i class="mini-dot"></i></div>
+        <div class="metric-value" id="metric-revenue">—</div>
+        <div class="metric-note">Antes de costos, impuestos y pago por tu tiempo</div>
+      </article>
+      <article class="metric">
+        <div class="metric-label"><span>Costos modelados</span><i class="mini-dot"></i></div>
+        <div class="metric-value" id="metric-costs">—</div>
+        <div class="metric-note" id="metric-cost-note">Internet + Google AI Pro + reserva de equipo</div>
+      </article>
+      <article class="metric highlight">
+        <div class="metric-label"><span>Excedente operativo estimado</span><i class="mini-dot"></i></div>
+        <div class="metric-value" id="metric-profit">—</div>
+        <div class="metric-note">No equivale a sueldo neto ni a utilidad después de impuestos</div>
+      </article>
+    </section>
+
+    <section class="hours-summary" aria-live="polite" aria-label="Horas de trabajo estimadas">
+      <article class="hours-card">
+        <div class="hours-label">Trabajo estimado para las clases</div>
+        <div class="hours-value" id="work-monthly">— h/mes</div>
+        <div class="hours-equivalence" id="work-weekly">≈ — h/semana</div>
+        <div class="hours-note" id="work-period">Según las clases estimadas y el tiempo total por sesión.</div>
+      </article>
+      <article class="hours-card">
+        <div class="hours-label">Disponibilidad de trabajo configurada</div>
+        <div class="hours-value" id="available-monthly">— h/mes</div>
+        <div class="hours-equivalence" id="available-weekly">≈ — h/semana</div>
+        <div class="hours-note" id="available-period">Límite del escenario actual.</div>
+      </article>
+      <article class="hours-card emphasis">
+        <div class="hours-label">Uso de la capacidad</div>
+        <div class="hours-value" id="work-utilization">—%</div>
+        <div class="hours-equivalence">Clases estimadas / disponibilidad</div>
+        <div class="hours-note">La equivalencia semanal usa 52 semanas por año.</div>
+      </article>
+    </section>
+
+    <section class="panel income-panel" aria-labelledby="income-heading-title">
+      <div class="income-heading">
+        <div>
+          <h2 id="income-heading-title">Ingreso bruto mensual por jornada</h2>
+          <p>El estimado por demanda usa la función hipotética y el periodo seleccionado. El techo supone que cada hora disponible se vende como una clase; es capacidad, no una previsión de ventas.</p>
+        </div>
+        <span class="editable-pill">Se actualiza con tus supuestos</span>
+      </div>
+      <div class="income-grid" aria-live="polite">
+        <article class="income-card">
+          <h3>Medio tiempo del modelo</h3>
+          <div class="income-hours" id="income-base-hours">40 h/mes · ≈ 9.2 h/semana</div>
+          <div class="income-label">Ingreso estimado por demanda</div>
+          <div class="income-value" id="income-base-revenue">—</div>
+          <div class="income-detail" id="income-base-detail">—</div>
+          <div class="income-ceiling">Techo con agenda llena: <strong id="income-base-ceiling">—</strong></div>
+        </article>
+        <article class="income-card">
+          <h3>Media jornada convencional</h3>
+          <div class="income-hours" id="income-half-hours">20 h/semana · ≈ 86.7 h/mes</div>
+          <div class="income-label">Ingreso estimado por demanda</div>
+          <div class="income-value" id="income-half-revenue">—</div>
+          <div class="income-detail" id="income-half-detail">—</div>
+          <div class="income-ceiling">Techo con agenda llena: <strong id="income-half-ceiling">—</strong></div>
+        </article>
+        <article class="income-card">
+          <h3>Tiempo completo</h3>
+          <div class="income-hours" id="income-full-hours">40 h/semana · ≈ 173.3 h/mes</div>
+          <div class="income-label">Ingreso estimado por demanda</div>
+          <div class="income-value" id="income-full-revenue">—</div>
+          <div class="income-detail" id="income-full-detail">—</div>
+          <div class="income-ceiling">Techo con agenda llena: <strong id="income-full-ceiling">—</strong></div>
+        </article>
+      </div>
+      <div class="income-caveat" id="income-assumption">—</div>
+    </section>
+
+    <section class="panel opportunities-panel" aria-labelledby="opportunities-title">
+      <div class="opportunities-heading">
+        <h2 id="opportunities-title">Rutas de posicionamiento para probar</h2>
+        <p>Exploración basada en precios publicados el 22 de octubre de 2026. Son referencias de oferta, no evidencia de ventas ni garantía de una tarifa mayor.</p>
+      </div>
+      <div class="opportunity-grid">
+        <article class="opportunity-card">
+          <div class="opportunity-tag">Mismo público · 18–25</div>
+          <h3>Entrevistas y primer empleo</h3>
+          <div class="opportunity-price">$475 por hora</div>
+          <div class="opportunity-copy">Un perfil en línea ofrece práctica de entrevistas y apoyo para CV a ese precio. Una oferta de 3–4 sesiones con simulacro y retroalimentación es una hipótesis para probar con jóvenes B1–B2.</div>
+          <a href="https://www.superprof.mx/native-brit-bilingual-spanish-and-english-interview-preparation-and-job-application-assessment-writing-coach-for-tests.html" target="_blank" rel="noopener">Ver perfil publicado</a>
+        </article>
+        <article class="opportunity-card">
+          <div class="opportunity-tag">Meta universitaria · B1–B2</div>
+          <h3>Preparación IELTS</h3>
+          <div class="opportunity-price">$7,435 · 32 horas</div>
+          <div class="opportunity-copy">British Council anuncia un curso en CDMX de hasta 16 estudiantes. Puede orientar un producto de diagnóstico, simulacro y retroalimentación; requiere conocer bien el examen.</div>
+          <a href="https://www.britishcouncil.org.mx/ingles/universitarios/preparacion-ielts" target="_blank" rel="noopener">Ver curso publicado</a>
+        </article>
+        <article class="opportunity-card">
+          <div class="opportunity-tag">Nuevo comprador · grupos/empresas</div>
+          <h3>Inglés para equipos</h3>
+          <div class="opportunity-price">$400 por hora grupal</div>
+          <div class="opportunity-copy">Wibby publica un curso corporativo en línea para hasta 8 alumnos. Es el precio del proveedor, no el pago esperado a una docente; la ocupación y venta B2B son incógnitas.</div>
+          <a href="https://wibby.com.mx/cursos-de-ingles-para-negocios/" target="_blank" rel="noopener">Ver oferta publicada</a>
+        </article>
+      </div>
+      <div class="opportunity-note">La ruta más cercana al público actual es practicar entrevistas para prácticas y primer empleo. Para comparar su potencial con clases generales, registra reservas pagadas, asistencia, renovaciones y todo el tiempo de preparación. Valida credenciales y capacidad antes de ofrecer IELTS o capacitación empresarial.</div>
+      <div class="opportunity-note">Como referencia de producto individual, <a href="https://beschool.com.mx/es/individuals" target="_blank" rel="noopener">BE School publica inglés profesional con profesor personal, recursos y seguimiento</a>: $450/h en un paquete de 12 horas, $375/h en 36 y $250/h en 72. El descuento por volumen forma parte de la oferta.</div>
+    </section>
+
+    <section class="panel presentation-panel" aria-labelledby="presentation-title">
+      <div class="presentation-head">
+        <div>
+          <h2 id="presentation-title">Presentación animada e interactiva</h2>
+          <p>Usa las flechas o controles para recorrer el modelo. Los clips se animaron con Manim y se navegan con HyperFrames.</p>
+        </div>
+        <a class="presentation-link" href="http://127.0.0.1:4173/" target="_blank" rel="noopener">Abrir presentación</a>
+      </div>
+      <iframe class="presentation-frame" src="http://127.0.0.1:4173/" title="Presentación interactiva de horas, ingresos y meta de ahorro" loading="lazy" allow="fullscreen"></iframe>
+    </section>
+
+    <div class="layout">
+      <section class="panel panel-pad">
+        <h3>Tu avance hacia el Dolphin Mini</h3>
+        <p class="panel-sub" id="chart-subtitle">Ahorro acumulado según el porcentaje de excedente que decidas apartar.</p>
+        <div class="chart-legend">
+          <span class="legend-item"><i class="legend-swatch"></i>Ahorro acumulado proyectado</span>
+          <span class="legend-item"><i class="legend-swatch target"></i>Precio objetivo del auto</span>
+          <span class="legend-item"><i class="legend-swatch mark"></i>Mes estimado de alcance, si ocurre</span>
+        </div>
+        <div class="chart-wrap" id="goal-chart"></div>
+        <div class="chart-foot"><span id="projection-range">—</span><span>Sin rendimiento financiero del ahorro</span></div>
+        <div class="car-goal">
+          <div class="goal-row"><span>Tiempo estimado para reunir el precio objetivo</span><strong id="goal-time">—</strong></div>
+          <div class="progress" aria-label="Progreso hacia el auto"><span id="goal-progress"></span></div>
+          <div class="goal-note" id="goal-note">—</div>
+        </div>
+      </section>
+
+      <aside class="panel assumptions">
+        <div class="assumptions-head">
+          <h3>Prueba tus supuestos</h3>
+          <span class="editable-pill">Editable</span>
+        </div>
+        <p class="panel-sub">Los datos publicados, las hipótesis y tus costos reales se identifican por separado.</p>
+
+        <div class="control-grid">
+          <div class="control full">
+            <label for="price"><span>Precio por clase de 60 min</span><span id="price-out">$250</span></label>
+            <input id="price" type="range" min="100" max="600" step="10" value="250">
+            <small>Precio de prueba editable; no representa una tarifa recomendada.</small>
+          </div>
+          <div class="control">
+            <label for="qref"><span>Clases/mes a $250</span><span class="tooltip" title="Cantidad hipotética, no observada. Sustituye por reservas o ventas cobradas.">?</span></label>
+            <input id="qref" type="number" min="0" max="500" step="1" value="24">
+            <small>Supuesto de demanda Q₂₅₀.</small>
+          </div>
+          <div class="control">
+            <label for="elasticity"><span>Elasticidad de demanda</span><span class="tooltip" title="Debe estimarse con datos de ventas a distintos precios.">?</span></label>
+            <input id="elasticity" type="number" min="-4" max="-0.1" step="0.1" value="-1">
+            <small>−1 es solo un escenario ilustrativo.</small>
+          </div>
+          <div class="control">
+            <label for="hours"><span>Horas disponibles/mes</span><span>h</span></label>
+            <input id="hours" type="number" min="1" max="300" step="1" value="40">
+          </div>
+          <div class="control">
+            <label for="session-hours"><span>Trabajo total por sesión</span><span>h</span></label>
+            <input id="session-hours" type="number" min="0.5" max="8" step="0.25" value="1">
+            <small>Incluye clase, preparación y administración.</small>
+          </div>
+          <div class="control full">
+            <label for="internet"><span>Internet al mes (MXN)</span><span class="status" id="internet-status"><i class="status-dot"></i><b>Pendiente</b></span></label>
+            <input id="internet" type="number" min="0" max="10000" step="10" value="0" placeholder="Captura el importe de tu recibo">
+            <small>Introduce solo la parte atribuible a las clases si compartes el servicio.</small>
+          </div>
+          <div class="control full toggle-row">
+            <div class="toggle-copy"><strong>Google AI Pro para Meet</strong>$395 MXN/mes según el precio publicado para México.<br><small>Para clases 1:1, Meet gratuito admite llamadas de hasta 24 h; desactívalo si no necesitas funciones premium.</small></div>
+            <label class="switch" aria-label="Incluir suscripción Google AI Pro"><input id="google-toggle" type="checkbox" checked><span></span></label>
+          </div>
+          <div class="control">
+            <label for="mac-price"><span>MacBook Neo básica</span><span>$</span></label>
+            <input id="mac-price" type="number" min="0" max="100000" step="100" value="14999">
+          </div>
+          <div class="control">
+            <label for="mac-life"><span>Vida útil estimada</span><span>meses</span></label>
+            <input id="mac-life" type="number" min="12" max="120" step="1" value="36">
+            <small>Reserva de reposición mensual.</small>
+          </div>
+          <div class="control full"><small>El precio de $14,999 es el dato que proporcionaste; los 36 meses de vida útil son un supuesto editable.</small></div>
+          <div class="control full">
+            <label for="saving-rate"><span>Parte del excedente que apartas</span><span id="saving-out">50%</span></label>
+            <input id="saving-rate" type="range" min="0" max="100" step="5" value="50">
+          </div>
+          <div class="control">
+            <label for="demand-growth"><span>Crecimiento anual de demanda</span><span>%</span></label>
+            <input id="demand-growth" type="number" min="-50" max="100" step="1" value="0">
+          </div>
+          <div class="control">
+            <label for="cost-growth"><span>Aumento anual de costos</span><span>%</span></label>
+            <input id="cost-growth" type="number" min="-20" max="100" step="1" value="0">
+          </div>
+          <div class="control full">
+            <label for="car-price"><span>Precio desde · Dolphin Mini 2026, 300 km</span><span>MXN</span></label>
+            <input id="car-price" type="number" min="100000" max="3000000" step="1000" value="399800">
+            <small>Precio de referencia publicado; verifica versión y cotización local.</small>
+          </div>
+          <div class="control">
+            <label for="car-growth"><span>Aumento anual precio del auto</span><span>%</span></label>
+            <input id="car-growth" type="number" min="-20" max="100" step="1" value="0">
+          </div>
+          <div class="control">
+            <label for="horizon"><span>Horizonte de proyección</span><span>años</span></label>
+            <select id="horizon"><option value="5">5</option><option value="10">10</option><option value="15" selected>15</option></select>
+          </div>
+        </div>
+
+        <div class="scenario-note" id="scenario-status">Q₂₅₀ y elasticidad son hipótesis de trabajo. Sustitúyelas por datos propios antes de tomar una decisión.</div>
+        <div class="formula" id="formula">Demanda = Q₂₅₀ × (precio / $250)^elasticidad<br>Clases vendidas = menor entre demanda y capacidad<br>Excedente = ingresos − costos modelados</div>
+      </aside>
+    </div>
+
+    <section class="panel table-panel">
+      <div class="table-head">
+        <div>
+          <h3 id="table-title">Detalle mensual</h3>
+          <p class="panel-sub" id="table-subtitle">Compara los meses de la proyección del año seleccionado.</p>
+        </div>
+        <span class="status" id="data-status"><i class="status-dot"></i><b>Escenario hipotético</b></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Periodo</th><th>Clases estimadas</th><th>Trabajo (h)</th><th>Promedio semanal (h)</th><th>Ingresos</th><th>Costos</th><th>Excedente</th><th>Ahorro al auto</th></tr></thead>
+          <tbody id="period-table"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="sources">
+      <span>Referencias consultadas el 22 oct 2026:</span>
+      <a href="https://www.byd-universidad.com.mx/" target="_blank" rel="noopener">BYD Universidad CDMX · Dolphin Mini desde $399,800</a>
+      <a href="https://gemini.google/mx/subscriptions/?hl=es-419" target="_blank" rel="noopener">Google · precio de AI Pro en México</a>
+      <a href="https://support.google.com/meet/answer/7317473?hl=es" target="_blank" rel="noopener">Google Meet · límites de reuniones individuales</a>
+    </div>
+    <div class="footnotes">
+      <strong>Cómo leerlo:</strong> todos los importes son MXN nominales. La proyección mantiene constantes el precio de clase y el del automóvil salvo los crecimientos que edites. El ahorro supone que apartas el porcentaje elegido del excedente positivo y que no obtienes rendimientos. No incluye impuestos, comisiones de pago, publicidad, cancelaciones, seguros, placas, instalación de cargador, financiamiento ni remuneración por tus horas. El costo mensual de la MacBook se trata como reserva para reponer equipo cada periodo de vida útil; no es el desembolso inicial. El precio publicado del vehículo es “desde” para una versión y puede cambiar por disponibilidad o cotización.
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+      const $ = (id) => document.getElementById(id);
+      const money = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
+      const number = new Intl.NumberFormat("es-MX", { maximumFractionDigits: 1 });
+      const monthsEs = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+      const startToday = new Date();
+      const startDate = new Date(startToday.getFullYear(), startToday.getMonth() + 1, 1);
+      let mode = "month";
+      let horizonMonths = 180;
+      let forecast = [];
+      let goalMonth = null;
+      const inputIds = ["price","qref","elasticity","hours","session-hours","internet","mac-price","mac-life","saving-rate","demand-growth","cost-growth","car-price","car-growth","horizon"];
+
+      function val(id, fallback) {
+        const n = Number($(id).value);
+        return Number.isFinite(n) ? n : fallback;
+      }
+      function clamp(n, lo, hi) { return Math.min(hi, Math.max(lo, n)); }
+      function fmtMoney(n) { return money.format(Number.isFinite(n) ? n : 0); }
+      function monthLabel(date, short) {
+        const m = monthsEs[date.getMonth()];
+        return (short ? m.slice(0,3) : m) + " " + date.getFullYear();
+      }
+      function getParams() {
+        const elasticity = clamp(val("elasticity", -1), -4, -0.1);
+        const workHours = clamp(val("hours", 40), 0, 10000);
+        const hoursPerSession = Math.max(0.1, val("session-hours", 1));
+        const savingsRate = clamp(val("saving-rate", 50), 0, 100) / 100;
+        const costGrowth = clamp(val("cost-growth", 0), -99, 500) / 100;
+        const demandGrowth = clamp(val("demand-growth", 0), -99, 500) / 100;
+        const carGrowth = clamp(val("car-growth", 0), -99, 500) / 100;
+        return {
+          price: clamp(val("price", 250), 1, 1000000),
+          qRef: Math.max(0, val("qref", 24)),
+          referencePrice: 250,
+          elasticity,
+          workHours,
+          hoursPerSession,
+          internet: Math.max(0, val("internet", 0)),
+          google: $("google-toggle").checked ? 395 : 0,
+          macPrice: Math.max(0, val("mac-price", 14999)),
+          macLife: Math.max(1, val("mac-life", 36)),
+          savingsRate,
+          demandGrowth,
+          costGrowth,
+          carPrice: Math.max(0, val("car-price", 399800)),
+          carGrowth
+        };
+      }
+      function makeRecord(p, index) {
+        const date = new Date(startDate.getFullYear(), startDate.getMonth() + index, 1);
+        const years = Math.floor(index / 12);
+        const demandBase = p.qRef * Math.pow(1 + p.demandGrowth, years);
+        const demand = Math.max(0, demandBase * Math.pow(p.price / p.referencePrice, p.elasticity));
+        const capacity = p.workHours / p.hoursPerSession;
+        const classes = Math.min(capacity, demand);
+        const inflation = Math.pow(1 + p.costGrowth, years);
+        const internetCost = p.internet * inflation;
+        const googleCost = p.google * inflation;
+        const macReserve = p.macPrice / p.macLife * inflation;
+        const costs = internetCost + googleCost + macReserve;
+        const revenue = classes * p.price;
+        const profit = revenue - costs;
+        const savings = Math.max(0, profit) * p.savingsRate;
+        const target = p.carPrice * Math.pow(1 + p.carGrowth, years);
+        return { date, index, years, demand, capacity, classes, price: p.price, revenue, costs, profit, savings, target };
+      }
+      function buildForecast() {
+        const p = getParams();
+        const months = Math.round(val("horizon", 15) * 12);
+        horizonMonths = months;
+        forecast = Array.from({ length: months }, (_, i) => makeRecord(p, i));
+        let cumulative = 0;
+        goalMonth = null;
+        forecast.forEach((r, i) => {
+          cumulative += r.savings;
+          r.cumulative = cumulative;
+          if (goalMonth === null && cumulative >= r.target) goalMonth = i + 1;
+        });
+        renderSelects();
+        renderAll();
+      }
+      function renderSelects() {
+        const yearSelect = $("year-select");
+        const monthSelect = $("month-select");
+        const oldYear = Number(yearSelect.value);
+        const oldMonth = Number(monthSelect.value);
+        const years = [...new Set(forecast.map((r) => r.date.getFullYear()))];
+        yearSelect.innerHTML = years.map((y) => '<option value="' + y + '">' + y + "</option>").join("");
+        const preferredYear = years.includes(oldYear) ? oldYear : (years.includes(startDate.getFullYear() + 1) ? startDate.getFullYear() + 1 : years[0]);
+        yearSelect.value = String(preferredYear);
+        const months = [...new Set(forecast.filter((r) => r.date.getFullYear() === preferredYear).map((r) => r.date.getMonth()))];
+        monthSelect.innerHTML = months.map((m) => '<option value="' + m + '">' + monthsEs[m] + "</option>").join("");
+        monthSelect.value = String(months.includes(oldMonth) ? oldMonth : (months.includes(startDate.getMonth()) ? startDate.getMonth() : months[0]));
+        $("month-label").style.display = mode === "year" ? "none" : "";
+        monthSelect.style.display = mode === "year" ? "none" : "";
+      }
+      function recordsForYear(year) { return forecast.filter((r) => r.date.getFullYear() === year); }
+      function selectedRecords() {
+        const year = Number($("year-select").value);
+        const rows = recordsForYear(year);
+        return mode === "year" ? rows : rows.filter((r) => r.date.getMonth() === Number($("month-select").value));
+      }
+      function sum(records, key) { return records.reduce((acc, r) => acc + r[key], 0); }
+      function renderMetrics() {
+        const rows = selectedRecords();
+        const year = Number($("year-select").value);
+        const month = Number($("month-select").value);
+        const title = mode === "year" ? String(year) : monthsEs[month] + " " + year;
+        $("period-title").textContent = mode === "year" ? "Tu panorama de " + year : "Tu panorama de " + title;
+        $("period-subtitle").textContent = mode === "year" ? "Totales del año seleccionado; el primer o último año puede ser parcial." : "Proyección mensual para " + title + " con los supuestos actuales.";
+        $("metric-classes").textContent = number.format(sum(rows, "classes"));
+        const capacityTotal = sum(rows, "capacity");
+        $("metric-capacity").textContent = "de " + number.format(capacityTotal) + " sesiones posibles en el periodo";
+        $("metric-revenue").textContent = fmtMoney(sum(rows, "revenue"));
+        $("metric-costs").textContent = fmtMoney(sum(rows, "costs"));
+        $("metric-profit").textContent = fmtMoney(sum(rows, "profit"));
+        $("metric-profit").className = "metric-value " + (sum(rows, "profit") >= 0 ? "positive" : "negative");
+        $("metric-cost-note").textContent = $("internet").value === "" || val("internet", 0) === 0 ? "Internet pendiente ($0 ingresado) + suscripción + reserva de equipo" : "Internet asignado + suscripción + reserva de equipo";
+      }
+      function renderWorkload() {
+        const p = getParams();
+        const rows = selectedRecords();
+        const periodMonths = Math.max(1, rows.length);
+        const weeks = periodMonths * 52 / 12;
+        const totalWorkHours = rows.reduce((acc, r) => acc + r.classes * p.hoursPerSession, 0);
+        const totalAvailableHours = rows.reduce((acc, r) => acc + r.capacity * p.hoursPerSession, 0);
+        const workPerMonth = totalWorkHours / periodMonths;
+        const workPerWeek = totalWorkHours / weeks;
+        const availablePerMonth = totalAvailableHours / periodMonths;
+        const availablePerWeek = totalAvailableHours / weeks;
+        const utilization = totalAvailableHours > 0 ? totalWorkHours / totalAvailableHours * 100 : 0;
+        const periodText = rows.length === 1 ? "en el mes seleccionado" : "en " + rows.length + " meses del periodo";
+        $("work-monthly").textContent = number.format(workPerMonth) + " h/mes";
+        $("work-weekly").textContent = "≈ " + number.format(workPerWeek) + " h/semana";
+        $("work-period").textContent = number.format(totalWorkHours) + " h de trabajo estimadas " + periodText + ", contando clase, preparación y administración según el tiempo por sesión.";
+        $("available-monthly").textContent = number.format(availablePerMonth) + " h/mes";
+        $("available-weekly").textContent = "≈ " + number.format(availablePerWeek) + " h/semana";
+        $("available-period").textContent = number.format(totalAvailableHours) + " h disponibles " + periodText + ".";
+        $("work-utilization").textContent = number.format(utilization) + "%";
+      }
+      function renderIncomeComparison() {
+        const p = getParams();
+        const rows = selectedRecords();
+        const months = Math.max(1, rows.length);
+        const demandPerMonth = sum(rows, "demand") / months;
+        const weeksPerMonth = 52 / 12;
+        const cases = [
+          { key: "base", hours: p.workHours },
+          { key: "half", hours: 20 * weeksPerMonth },
+          { key: "full", hours: 40 * weeksPerMonth }
+        ];
+        cases.forEach((scenario) => {
+          const capacity = scenario.hours / p.hoursPerSession;
+          const classes = Math.min(demandPerMonth, capacity);
+          const gross = classes * p.price;
+          const ceiling = capacity * p.price;
+          $("income-" + scenario.key + "-revenue").textContent = fmtMoney(gross);
+          $("income-" + scenario.key + "-detail").textContent = number.format(classes) + " clases estimadas al mes; ingreso bruto antes de costos.";
+          $("income-" + scenario.key + "-ceiling").textContent = fmtMoney(ceiling) + "/mes";
+        });
+        $("income-base-hours").textContent = number.format(p.workHours) + " h/mes · ≈ " + number.format(p.workHours / weeksPerMonth) + " h/semana";
+        $("income-half-hours").textContent = "20 h/semana · ≈ " + number.format(20 * weeksPerMonth) + " h/mes";
+        $("income-full-hours").textContent = "40 h/semana · ≈ " + number.format(40 * weeksPerMonth) + " h/mes";
+        const periodLabel = rows.length > 1 ? "promedio mensual del periodo seleccionado" : "mes seleccionado";
+        $("income-assumption").textContent = "Estimación para el " + periodLabel + ": la demanda parte de " + number.format(val("qref", 24)) + " clases al mes a $250 y elasticidad " + number.format(val("elasticity", -1)) + ". Es una hipótesis sin ventas observadas. La jornada completa se calcula con 8 h/día × 5 días/semana; la media jornada convencional con 4 h/día × 5 días. Cada clase usa " + number.format(p.hoursPerSession) + " h totales de trabajo.";
+      }
+      function svgChart() {
+        const data = forecast;
+        const width = 900, height = 290, left = 75, right = 18, top = 18, bottom = 40;
+        const plotW = width - left - right, plotH = height - top - bottom;
+        const maxY = Math.max(1, ...data.map((r) => Math.max(r.cumulative, r.target))) * 1.12;
+        const x = (i) => left + (i / Math.max(1, data.length - 1)) * plotW;
+        const y = (n) => top + plotH - (n / maxY) * plotH;
+        let grid = "";
+        for (let i = 0; i <= 4; i++) {
+          const value = maxY * i / 4;
+          const yy = y(value);
+          grid += '<line x1="' + left + '" y1="' + yy + '" x2="' + (width-right) + '" y2="' + yy + '" stroke="#e8eeea" stroke-width="1"/>';
+          grid += '<text x="' + (left-10) + '" y="' + (yy+4) + '" text-anchor="end" fill="#80928e" font-size="10">' + Math.round(value / 1000) + 'k</text>';
+        }
+        let labels = "";
+        for (let i = 0; i < data.length; i += 12) {
+          labels += '<text x="' + x(i) + '" y="' + (height-12) + '" text-anchor="middle" fill="#80928e" font-size="10">' + data[i].date.getFullYear() + '</text>';
+        }
+        const cumulativePoints = data.map((r, i) => x(i) + "," + y(r.cumulative)).join(" ");
+        const targetPoints = data.map((r, i) => x(i) + "," + y(r.target)).join(" ");
+        let marker = "";
+        if (goalMonth !== null && goalMonth <= data.length) {
+          const r = data[goalMonth - 1];
+          marker = '<circle cx="' + x(goalMonth-1) + '" cy="' + y(r.cumulative) + '" r="6" fill="#94c942" stroke="#fff" stroke-width="3"><title>Meta alcanzada en ' + monthLabel(r.date, false) + '</title></circle>';
+        }
+        return '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Proyección de ahorro acumulado frente al precio objetivo del auto">' +
+          grid + labels +
+          '<polyline points="' + targetPoints + '" fill="none" stroke="#eab755" stroke-width="2.5" stroke-dasharray="7 6"/>' +
+          '<polyline points="' + cumulativePoints + '" fill="none" stroke="#0d6c68" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>' + marker +
+          '</svg>';
+      }
+      function renderGoal() {
+        $("goal-chart").innerHTML = svgChart();
+        const last = forecast[forecast.length - 1];
+        const startRange = monthLabel(forecast[0].date, false);
+        const endRange = monthLabel(last.date, false);
+        $("projection-range").textContent = startRange + " – " + endRange;
+        if (goalMonth !== null) {
+          const r = forecast[goalMonth - 1];
+          const years = Math.floor((goalMonth - 1) / 12);
+          const months = (goalMonth - 1) % 12;
+          let duration = years ? years + (years === 1 ? " año" : " años") : "";
+          if (months) duration += (duration ? " y " : "") + months + (months === 1 ? " mes" : " meses");
+          if (!duration) duration = "menos de 1 mes";
+          $("goal-time").textContent = duration;
+          $("goal-note").textContent = "Alcanzarías el precio objetivo alrededor de " + monthLabel(r.date, false) + " en este escenario. Meta estimada para ese momento: " + fmtMoney(r.target) + ".";
+        } else {
+          const rate = forecast.length ? forecast[forecast.length - 1].cumulative : 0;
+          $("goal-time").textContent = "Más de " + Math.round(horizonMonths / 12) + " años";
+          $("goal-note").textContent = "En el horizonte modelado acumularías " + fmtMoney(rate) + "; la meta estimada al final sería " + fmtMoney(last.target) + ". Prueba otra combinación de tarifa, demanda, horas o ahorro.";
+        }
+        const p = getParams();
+        const savedToSelected = selectedRecords().length ? selectedRecords()[selectedRecords().length - 1].cumulative : 0;
+        const targetAtEnd = selectedRecords().length ? selectedRecords()[selectedRecords().length - 1].target : p.carPrice;
+        const pct = targetAtEnd > 0 ? clamp(savedToSelected / targetAtEnd * 100, 0, 100) : 0;
+        $("goal-progress").style.width = pct + "%";
+        $("chart-subtitle").textContent = "Ahorro acumulado apartando " + Math.round(p.savingsRate * 100) + "% del excedente positivo; precio del auto y costos evolucionan según tus supuestos.";
+      }
+      function renderTable() {
+        const p = getParams();
+        const year = Number($("year-select").value);
+        const rows = mode === "year" ? recordsForYear(year) : selectedRecords();
+        $("table-title").textContent = mode === "year" ? "Detalle mensual de " + year : "Detalle de " + (rows[0] ? monthLabel(rows[0].date, false) : "periodo");
+        $("table-subtitle").textContent = mode === "year" ? "Cada fila desglosa el año seleccionado." : "Resumen del mes seleccionado.";
+        $("period-table").innerHTML = rows.map((r) => {
+          const profitClass = r.profit >= 0 ? "positive" : "negative";
+          const workHours = r.classes * p.hoursPerSession;
+          const weeklyHours = workHours * 12 / 52;
+          return "<tr><td>" + monthLabel(r.date, false) + "</td><td>" + number.format(r.classes) + "</td><td>" + number.format(workHours) + "</td><td>" + number.format(weeklyHours) + "</td><td>" + fmtMoney(r.revenue) + "</td><td>" + fmtMoney(r.costs) + "</td><td class='" + profitClass + "'>" + fmtMoney(r.profit) + "</td><td>" + fmtMoney(r.savings) + "</td></tr>";
+        }).join("") || '<tr><td colspan="8">Sin periodos en la proyección.</td></tr>';
+      }
+      function renderStatus() {
+        const internetKnown = val("internet", 0) > 0;
+        $("internet-status").classList.toggle("ready", internetKnown);
+        $("internet-status").querySelector("b").textContent = internetKnown ? "Capturado" : "Pendiente";
+        $("scenario-status").textContent = "La demanda (" + number.format(val("qref", 24)) + " clases a $250 y elasticidad " + number.format(val("elasticity", -1)) + ") es hipotética, no estimada con ventas. " + (internetKnown ? "Internet ya está incluido." : "Internet sigue en $0: los resultados sobrestiman el excedente hasta capturar el recibo.");
+        $("data-status").querySelector("b").textContent = internetKnown ? "Proyección con costos capturados" : "Escenario incompleto: falta internet";
+        $("data-status").classList.toggle("ready", internetKnown);
+      }
+      function renderAll() {
+        renderMetrics();
+        renderWorkload();
+        renderIncomeComparison();
+        renderGoal();
+        renderTable();
+        renderStatus();
+      }
+      function setMode(newMode) {
+        mode = newMode;
+        $("month-mode").classList.toggle("active", mode === "month");
+        $("year-mode").classList.toggle("active", mode === "year");
+        renderSelects();
+        renderAll();
+      }
+
+      inputIds.forEach((id) => $(id).addEventListener("input", buildForecast));
+      $("google-toggle").addEventListener("change", buildForecast);
+      $("month-mode").addEventListener("click", () => setMode("month"));
+      $("year-mode").addEventListener("click", () => setMode("year"));
+      $("month-select").addEventListener("change", renderAll);
+      $("year-select").addEventListener("change", () => { renderSelects(); renderAll(); });
+      $("price").addEventListener("input", () => { $("price-out").textContent = fmtMoney(val("price",250)); });
+      $("saving-rate").addEventListener("input", () => { $("saving-out").textContent = Math.round(val("saving-rate",50)) + "%"; });
+      $("horizon").addEventListener("change", buildForecast);
+      buildForecast();
+    })();
+  </script>
+</body>
+</html>
